@@ -25,8 +25,16 @@
     </head>
     <body>
         <main>
-            <h1>Welcom to the home page</h1>
-            <form method="POST" action="" id="loginForm">
+            <h1>Get Shipping Rates</h1>
+            @php
+                $display_login_form = '';
+                $display_rates_form = 'hidden';
+                if($cookieset == true) {
+                    $display_login_form = 'hidden';
+                    $display_rates_form = '';
+                }
+            @endphp
+            <form method="POST" action="" id="loginForm" class=" <?php echo $display_login_form ?>">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                 <div>
                     <label for="name">User Name:</label>
@@ -43,7 +51,7 @@
 
 
 
-            <form method="POST" action="" id="getRatesForm" class="hiddenss">
+            <form method="POST" action="" id="getRatesForm" class="<?php echo $display_rates_form ?>">
                 <input type="hidden" name="_token_rates" value="{{ csrf_token() }}" />
                 <input type="hidden" name="vendorid" value="1901539643" />
                 <div>
@@ -112,7 +120,6 @@
 
                         if (response.status >= 200 && response.status <= 299) {
                             const jwt = await response.json()
-                            console.log("jwt", jwt.data.accessToken);
                             document.querySelector('#loginForm').classList.add('hidden');
                             document.querySelector('#getRatesForm').classList.remove('hidden');
                             //setJwtCookie(jwt.data.accessToken, jwt.data.exp)

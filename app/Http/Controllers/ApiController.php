@@ -35,21 +35,19 @@ class ApiController extends Controller
         $formData = $request->all();
         $vendorID = $request->get('vendorid');
 
-        Log::error("getRates request". print_r($formData,true));
-       
         unset($formData['_token_rates']);
         unset($formData['vendorid']);
 
-        //dd($formData);
-        
         $sanitized_data = array_map([$this, 'sanitize_text_input'],  $formData);
         $data = $this->apiService->getRates($vendorID, $sanitized_data);
 
-        Log::error("data in controllers". print_r($data,true). " = ". count($data));
-        //if (is_array($data) && count($data) > 0) {]}
         $result = ( isset($data['response']) && count($data['response']) > 0 ) ? $data['response']['data']['results']: [];
         if($result){
-            $res = format_array_response($result);
+            $formatted_results = format_array_response($result);
+            $res = [
+                "formatted" => $formatted_results,
+                "cheapest" => get_cheapest_rate($formatted_results)
+            ];
             $html = view('partials.results', compact('res'))->render();
             return response()->json($html, 200);
         } else {
