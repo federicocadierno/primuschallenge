@@ -14,6 +14,24 @@ class ApiControllerTest extends TestCase
     /**
      * A basic feature test example.
      */
+
+    public function test_login() {
+        $mock = Mockery::mock(ApiService::class);
+        $mock->shouldReceive('getTokenRequest')
+            //->with(Mockery::type('int'), Mockery::any())
+            ->andReturn('success');
+
+        $this->app->instance(\App\Services\ApiService::class, $mock);
+        $params = [
+            'username' => 'testDemo',
+            'password' => '1234'
+        ];
+        $response = $this->post('/login-api', $params);
+
+        $response->assertStatus(200);
+
+    }
+
     public function test_get_rates()
     {
 
@@ -49,7 +67,7 @@ class ApiControllerTest extends TestCase
 
     }
 
-     public function test_get_rates_not_data_found()
+    public function test_get_rates_not_data_found()
     {
                
         $mock = Mockery::mock(ApiService::class);
